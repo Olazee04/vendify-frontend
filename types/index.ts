@@ -51,6 +51,9 @@ export interface Product {
   images: ProductImage[];
   variants: ProductVariant[];
   createdAt: string;
+
+   averageRating?: number;
+  reviewCount?: number;
 }
 
 export interface ProductImage {
@@ -155,6 +158,12 @@ export interface Dashboard {
   revenueThisMonth: number;
   revenueLastMonth: number;
   revenueGrowthPercent: number;
+  monthRevenue: number;
+  monthOrders: number;
+  revenueGrowth: number;
+  ordersGrowth: number;
+  newCustomers: number;
+  revenueByMonth: { month: string; revenue: number }[];
   totalOrders: number;
   ordersThisMonth: number;
   pendingOrders: number;

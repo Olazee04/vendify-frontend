@@ -2,96 +2,197 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
 
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50
-        bg-white/90 backdrop-blur-sm border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-4
-          flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-purple-600">
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        backdropFilter: 'blur(8px)',
+        borderBottom: '1px solid #f3f4f6',
+        padding: '0 1rem',
+      }}>
+        <div style={{
+          maxWidth: '1152px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '64px',
+        }}>
+          <h1 style={{
+            fontSize: '1.5rem',
+            fontWeight: 800,
+            color: '#7c3aed',
+          }}>
             Vendify
           </h1>
-          <div className="flex items-center gap-3">
-            <Link href="/login"
-              className="text-gray-600 hover:text-purple-600
-                font-medium px-4 py-2 transition-colors">
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <Link href="/login" style={{
+              color: '#6b7280',
+              textDecoration: 'none',
+              fontWeight: 500,
+              padding: '8px 16px',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+            }}>
               Login
             </Link>
-            <Link href="/register"
-              className="bg-purple-600 text-white px-5 py-2
-                rounded-lg font-medium hover:bg-purple-700
-                transition-colors">
+            <Link href="/register" style={{
+              backgroundColor: '#7c3aed',
+              color: '#ffffff',
+              textDecoration: 'none',
+              fontWeight: 600,
+              padding: '10px 20px',
+              borderRadius: '10px',
+              fontSize: '0.9rem',
+            }}>
               Get Started Free
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
       <section style={{
-        background: 'linear-gradient(135deg, #f5f3ff 0%, #eef2ff 100%)'
-      }} className="pt-32 pb-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-block bg-purple-100
-            text-purple-600 px-4 py-1 rounded-full
-            text-sm font-medium mb-6">
-             Ecommerce Platform for All Businesses 
+        paddingTop: '120px',
+        paddingBottom: '80px',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+        background: 'linear-gradient(135deg, #f5f3ff 0%, #eef2ff 100%)',
+        textAlign: 'center',
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+
+          <div style={{
+            display: 'inline-block',
+            backgroundColor: '#ede9fe',
+            color: '#7c3aed',
+            padding: '6px 16px',
+            borderRadius: '999px',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            marginBottom: '24px',
+          }}>
+            Built for Nigerian Merchants
           </div>
-          <h2 className="text-5xl font-bold text-gray-900
-            leading-tight mb-6">
-            Sell Anything Online
-            <span className="text-purple-600"> In Minutes</span>
+
+          <h2 style={{
+            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+            fontWeight: 800,
+            color: '#111827',
+            lineHeight: 1.2,
+            marginBottom: '24px',
+          }}>
+            Sell Anything Online{' '}
+            <span style={{ color: '#7c3aed' }}>In Minutes</span>
           </h2>
-          <p className="text-xl text-gray-500 mb-10
-            max-w-2xl mx-auto">
-            Create your online store, add products, accept
-            payments via Paystack and Flutterwave.
-            No technical skills needed.
+
+          <p style={{
+            fontSize: '1.125rem',
+            color: '#6b7280',
+            marginBottom: '40px',
+            lineHeight: 1.7,
+            maxWidth: '600px',
+            margin: '0 auto 40px',
+          }}>
+            Create your online store, add products, accept payments
+            via Paystack and Flutterwave. No technical skills needed.
           </p>
-          <div className="flex flex-col sm:flex-row
-            gap-4 justify-center">
-            <Link href="/register"
-              className="bg-purple-600 text-white px-8 py-4
-                rounded-xl font-bold text-lg
-                hover:bg-purple-700 transition-colors">
-              Start Selling Today — Free 🚀
+
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}>
+            <Link href="/register" style={{
+              backgroundColor: '#7c3aed',
+              color: '#ffffff',
+              textDecoration: 'none',
+              fontWeight: 700,
+              padding: '16px 32px',
+              borderRadius: '14px',
+              fontSize: '1rem',
+              display: 'inline-block',
+            }}>
+              Start Selling Today - Free
             </Link>
-            <Link href="/login"
-              className="bg-white text-purple-600 px-8 py-4
-                rounded-xl font-bold text-lg border-2
-                border-purple-200 hover:border-purple-400
-                transition-colors">
+            <Link href="/login" style={{
+              backgroundColor: '#ffffff',
+              color: '#7c3aed',
+              textDecoration: 'none',
+              fontWeight: 700,
+              padding: '16px 32px',
+              borderRadius: '14px',
+              fontSize: '1rem',
+              border: '2px solid #ddd6fe',
+              display: 'inline-block',
+            }}>
               Login to Dashboard
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h3 className="text-3xl font-bold text-center
-            text-gray-900 mb-4">
+      <section style={{
+        padding: '80px 1rem',
+        backgroundColor: '#ffffff',
+      }}>
+        <div style={{ maxWidth: '1152px', margin: '0 auto' }}>
+          <h3 style={{
+            fontSize: '2rem',
+            fontWeight: 800,
+            textAlign: 'center',
+            color: '#111827',
+            marginBottom: '12px',
+          }}>
             Everything You Need to Sell Online
           </h3>
-          <p className="text-gray-500 text-center mb-12">
+          <p style={{
+            textAlign: 'center',
+            color: '#9ca3af',
+            marginBottom: '48px',
+            fontSize: '1rem',
+          }}>
             All the tools to run a successful online store
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2
-            lg:grid-cols-3 gap-6">
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+          }}>
             {features.map((f) => (
-              <div key={f.title}
-                className="p-6 rounded-2xl border border-gray-100
-                  hover:border-purple-200 hover:shadow-lg
-                  transition-all duration-200">
-                <div className="text-4xl mb-4">{f.icon}</div>
-                <h4 className="text-lg font-bold
-                  text-gray-900 mb-2">
+              <div key={f.title} style={{
+                padding: '28px',
+                borderRadius: '16px',
+                border: '1px solid #f3f4f6',
+                backgroundColor: '#ffffff',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                transition: 'all 0.2s',
+              }}>
+                <div style={{
+                  fontSize: '2.5rem',
+                  marginBottom: '16px',
+                }}>
+                  {f.icon}
+                </div>
+                <h4 style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  color: '#111827',
+                  marginBottom: '8px',
+                }}>
                   {f.title}
                 </h4>
-                <p className="text-gray-500 text-sm
-                  leading-relaxed">
+                <p style={{
+                  fontSize: '0.9rem',
+                  color: '#6b7280',
+                  lineHeight: 1.6,
+                }}>
                   {f.desc}
                 </p>
               </div>
@@ -100,17 +201,110 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 px-4 bg-purple-600">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4
-            gap-8 text-center">
-            {stats.map((s) => (
-              <div key={s.label}>
-                <p className="text-4xl font-bold
-                  text-white mb-2">{s.value}</p>
-                <p className="text-purple-200 text-sm">
-                  {s.label}
+      <section style={{
+        padding: '64px 1rem',
+        backgroundColor: '#7c3aed',
+      }}>
+        <div style={{
+          maxWidth: '900px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+          gap: '32px',
+          textAlign: 'center',
+        }}>
+          {stats.map((s) => (
+            <div key={s.label}>
+              <p style={{
+                fontSize: '2.5rem',
+                fontWeight: 800,
+                color: '#ffffff',
+                marginBottom: '6px',
+              }}>
+                {s.value}
+              </p>
+              <p style={{
+                fontSize: '0.875rem',
+                color: '#ddd6fe',
+              }}>
+                {s.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{
+        padding: '80px 1rem',
+        backgroundColor: '#fafafa',
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <h3 style={{
+            fontSize: '2rem',
+            fontWeight: 800,
+            textAlign: 'center',
+            color: '#111827',
+            marginBottom: '12px',
+          }}>
+            Get Started in 4 Simple Steps
+          </h3>
+          <p style={{
+            textAlign: 'center',
+            color: '#9ca3af',
+            marginBottom: '48px',
+          }}>
+            No technical skills needed
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: '24px',
+          }}>
+            {steps.map((step, i) => (
+              <div key={step.title} style={{
+                textAlign: 'center',
+                padding: '24px 16px',
+                borderRadius: '16px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #f3f4f6',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  backgroundColor: '#ede9fe',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                  fontSize: '1.2rem',
+                  fontWeight: 800,
+                  color: '#7c3aed',
+                }}>
+                  {i + 1}
+                </div>
+                <p style={{
+                  fontSize: '1.5rem',
+                  marginBottom: '8px',
+                }}>
+                  {step.icon}
+                </p>
+                <h4 style={{
+                  fontWeight: 700,
+                  color: '#111827',
+                  fontSize: '0.95rem',
+                  marginBottom: '6px',
+                }}>
+                  {step.title}
+                </h4>
+                <p style={{
+                  fontSize: '0.8rem',
+                  color: '#9ca3af',
+                  lineHeight: 1.5,
+                }}>
+                  {step.desc}
                 </p>
               </div>
             ))}
@@ -118,43 +312,121 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 px-4 bg-gray-50">
-        <div className="max-w-3xl mx-auto text-center">
-          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+      <section style={{
+        padding: '60px 1rem',
+        backgroundColor: '#ffffff',
+        borderTop: '1px solid #f3f4f6',
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          <p style={{
+            color: '#9ca3af',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginBottom: '32px',
+          }}>
+            Trusted Payment Partners
+          </p>
+          <div style={{
+            display: 'flex',
+            gap: '32px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}>
+            {['Paystack', 'Flutterwave', 'Stripe'].map(p => (
+              <div key={p} style={{
+                padding: '12px 24px',
+                borderRadius: '10px',
+                border: '1px solid #e5e7eb',
+                fontWeight: 600,
+                color: '#374151',
+                fontSize: '0.95rem',
+                backgroundColor: '#f9fafb',
+              }}>
+                {p}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section style={{
+        padding: '80px 1rem',
+        background: 'linear-gradient(135deg, #7c3aed, #4f46e5)',
+        textAlign: 'center',
+      }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <h3 style={{
+            fontSize: '2rem',
+            fontWeight: 800,
+            color: '#ffffff',
+            marginBottom: '16px',
+          }}>
             Ready to Start Selling?
           </h3>
-          <p className="text-gray-500 mb-8">
-            Join thousands of merchants already
-            using Vendify
+          <p style={{
+            color: '#ddd6fe',
+            marginBottom: '32px',
+            fontSize: '1rem',
+            lineHeight: 1.6,
+          }}>
+            Join thousands of Nigerian merchants already using Vendify.
+            Free forever to get started.
           </p>
-          <Link href="/register"
-            className="bg-purple-600 text-white px-8 py-4
-              rounded-xl font-bold text-lg
-              hover:bg-purple-700 transition-colors
-              inline-block">
-            Create Free Account 🚀
+          <Link href="/register" style={{
+            backgroundColor: '#ffffff',
+            color: '#7c3aed',
+            textDecoration: 'none',
+            fontWeight: 800,
+            padding: '16px 40px',
+            borderRadius: '14px',
+            fontSize: '1.1rem',
+            display: 'inline-block',
+          }}>
+            Create Free Account
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto flex flex-col
-          md:flex-row items-center justify-between gap-4">
-          <h2 className="text-xl font-bold text-purple-600">
+      <footer style={{
+        padding: '32px 1rem',
+        borderTop: '1px solid #f3f4f6',
+        backgroundColor: '#ffffff',
+      }}>
+        <div style={{
+          maxWidth: '1152px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: 800,
+            color: '#7c3aed',
+          }}>
             Vendify
           </h2>
-          <p className="text-gray-400 text-sm">
-            © 2026 Vendify. Built with ❤️ 
+          <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
+            © 2026 Vendify. Built with love in Nigeria
           </p>
-          <div className="flex gap-4 text-sm text-gray-500">
-            <Link href="/login"
-              className="hover:text-purple-600">
+          <div style={{ display: 'flex', gap: '20px' }}>
+            <Link href="/login" style={{
+              color: '#6b7280',
+              textDecoration: 'none',
+              fontSize: '0.875rem',
+            }}>
               Login
             </Link>
-            <Link href="/register"
-              className="hover:text-purple-600">
+            <Link href="/register" style={{
+              color: '#6b7280',
+              textDecoration: 'none',
+              fontSize: '0.875rem',
+            }}>
               Register
             </Link>
           </div>
@@ -166,34 +438,34 @@ export default function HomePage() {
 
 const features = [
   {
-    icon: '🏪',
+    icon: 'S',
     title: 'Easy Store Setup',
     desc: 'Create your store in minutes. No technical skills needed. Just add products and start selling.',
   },
   {
-    icon: '💳',
-    title: 'Payments Integration',
+    icon: 'P',
+    title: 'Nigerian Payments',
     desc: 'Accept payments via Paystack and Flutterwave. Support for Naira and international currencies.',
   },
   {
-    icon: '📦',
+    icon: 'O',
     title: 'Order Management',
     desc: 'Track orders from placement to delivery. Update status and notify customers automatically.',
   },
   {
-    icon: '📱',
+    icon: 'W',
     title: 'WhatsApp Integration',
     desc: 'Get instant order notifications on WhatsApp. Let customers contact you directly.',
   },
   {
-    icon: '📊',
+    icon: 'A',
     title: 'Sales Analytics',
     desc: 'See your revenue, top products, and growth in a beautiful real-time dashboard.',
   },
   {
-    icon: '🎨',
+    icon: 'T',
     title: 'Beautiful Themes',
-    desc: 'Choose from 7 free themes — Fashion, Tech, Food, Beauty, Digital and Naija Market.',
+    desc: 'Choose from 7 free themes - Fashion, Tech, Food, Beauty, Digital and Naija Market.',
   },
 ];
 
@@ -202,4 +474,27 @@ const stats = [
   { value: '3', label: 'Payment Providers' },
   { value: '60+', label: 'API Endpoints' },
   { value: '100%', label: 'Free to Start' },
+];
+
+const steps = [
+  {
+    icon: '1',
+    title: 'Create Account',
+    desc: 'Sign up free in under a minute',
+  },
+  {
+    icon: '2',
+    title: 'Set Up Store',
+    desc: 'Add your store name and details',
+  },
+  {
+    icon: '3',
+    title: 'Add Products',
+    desc: 'Upload products with photos',
+  },
+  {
+    icon: '4',
+    title: 'Start Selling',
+    desc: 'Share your link and get orders',
+  },
 ];

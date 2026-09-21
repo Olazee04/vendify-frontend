@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,169 +10,199 @@ import { useAuth } from '@/hooks/useAuth';
 export default function LoginPage() {
   const router = useRouter();
   const { saveAuth } = useAuth();
+  const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-  });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const response = await api.post('/auth/login', form);
-      const { accessToken, refreshToken, user } = response.data.data;
-
-      saveAuth(user, accessToken, refreshToken);
-      toast.success(`Welcome back, ${user.firstName}! 👋`);
-
-      if (user.hasStore) {
-        router.push('/dashboard');
-      } else {
-        router.push('/store/setup');
-      }
+      const res = await api.post('/auth/login', {
+        email: form.email.toLowerCase().trim(),
+        password: form.password,
+      });
+      const { accessToken, refreshToken, user } = res.data.data;
+saveAuth(user, accessToken, refreshToken);
+      toast.success('Welcome back!');
+      router.push('/dashboard');
     } catch (error: any) {
-      const message = error.response?.data?.message
-        || 'Login failed. Please try again.';
-      toast.error(message);
+      toast.error(
+        error.response?.data?.message
+          || 'Login failed. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-
-      {/* Left side - decorative */}
-      <div className="hidden lg:flex lg:w-1/2
-        bg-purple-600 flex-col items-center
-        justify-center p-12 text-white">
-        <h1 className="text-4xl font-bold mb-4">Vendify</h1>
-        <p className="text-xl text-purple-200 text-center mb-8">
-          Your complete online store solution
-        </p>
-        <div className="space-y-4 w-full max-w-sm">
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+    }}>
+      {/* Left Panel */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '48px',
+        color: 'white',
+      }}
+        className="hidden lg:flex">
+        <div>
+          <h1 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '16px' }}>
+            Vendify
+          </h1>
+          <p style={{ fontSize: '1.25rem', opacity: 0.9, marginBottom: '32px' }}>
+            Your complete online store solution
+          </p>
           {[
-            '✅ Accept Paystack & Flutterwave payments',
-            '✅ Manage products and inventory',
-            '✅ Track orders in real-time',
-            '✅ WhatsApp order notifications',
-            '✅ Beautiful store themes',
-          ].map((item) => (
-            <p key={item} className="text-purple-100 text-sm">
-              {item}
-            </p>
+            'Accept Paystack & Flutterwave payments',
+            'Manage products and inventory',
+            'Track orders in real-time',
+            'WhatsApp order notifications',
+            'Beautiful store themes',
+          ].map(item => (
+            <div key={item} style={{
+              display: 'flex', alignItems: 'center',
+              gap: '12px', marginBottom: '12px',
+            }}>
+              <span style={{
+                width: '20px', height: '20px',
+                background: 'rgba(255,255,255,0.2)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontSize: '12px',
+              }}>✓</span>
+              <span style={{ opacity: 0.9 }}>{item}</span>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Right side - form */}
-      <div className="w-full lg:w-1/2 flex items-center
-        justify-center p-8 bg-gray-50">
-        <div className="w-full max-w-md">
+      {/* Right Panel */}
+      <div style={{
+        flex: 1, display: 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '24px', background: 'white',
+      }}>
+        <div style={{ width: '100%', maxWidth: '420px' }}>
+          <h2 style={{
+            fontSize: '1.75rem', fontWeight: 800,
+            color: '#111827', marginBottom: '8px',
+          }}>
+            Welcome back 👋
+          </h2>
+          <p style={{ color: '#6b7280', marginBottom: '32px' }}>
+            Login to your merchant dashboard
+          </p>
 
-          {/* Logo for mobile */}
-          <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-purple-600">
-              Vendify
-            </h1>
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                display: 'block', fontSize: '14px',
+                fontWeight: 600, color: '#374151',
+                marginBottom: '6px',
+              }}>
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={e => setForm({ ...form, email: e.target.value })}
+                placeholder="you@example.com"
+                required
+                style={{
+                  width: '100%', padding: '12px 16px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '10px', fontSize: '15px',
+                  outline: 'none', boxSizing: 'border-box',
+                  color: '#111827',
+                }}
+              />
+            </div>
 
-          <div className="bg-white rounded-2xl shadow-sm
-            border border-gray-100 p-8">
-
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome back 👋
-            </h2>
-            <p className="text-gray-500 mb-8">
-              Login to your merchant dashboard
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-
-              <div>
-                <label className="block text-sm font-medium
-                  text-gray-700 mb-1.5">
-                  Email Address
+            <div style={{ marginBottom: '8px' }}>
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                marginBottom: '6px',
+              }}>
+                <label style={{
+                  fontSize: '14px', fontWeight: 600,
+                  color: '#374151',
+                }}>
+                  Password
                 </label>
-                <input
-                  type="email"
-                  required
-                  value={form.email}
-                  onChange={(e) => setForm({
-                    ...form, email: e.target.value
-                  })}
-                  className="w-full px-4 py-3 border border-gray-200
-                    rounded-xl focus:outline-none focus:ring-2
-                    focus:ring-purple-500 focus:border-transparent
-                    transition-all text-gray-900"
-                  placeholder="you@example.com"
-                />
+                <Link href="/forgot-password" style={{
+                  fontSize: '14px', color: '#7c3aed',
+                  textDecoration: 'none',
+                }}>
+                  Forgot password?
+                </Link>
               </div>
-
-              <div>
-                <div className="flex items-center
-                  justify-between mb-1.5">
-                  <label className="block text-sm font-medium
-                    text-gray-700">
-                    Password
-                  </label>
-                  <Link href="/forgot-password"
-                    className="text-sm text-purple-600
-                      hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
+              <div style={{ position: 'relative' }}>
                 <input
-                  type="password"
-                  required
+                  type={showPassword ? 'text' : 'password'}
                   value={form.password}
-                  onChange={(e) => setForm({
-                    ...form, password: e.target.value
-                  })}
-                  className="w-full px-4 py-3 border border-gray-200
-                    rounded-xl focus:outline-none focus:ring-2
-                    focus:ring-purple-500 focus:border-transparent
-                    transition-all text-gray-900"
+                  onChange={e => setForm({ ...form, password: e.target.value })}
                   placeholder="••••••••"
+                  required
+                  style={{
+                    width: '100%', padding: '12px 48px 12px 16px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '10px', fontSize: '15px',
+                    outline: 'none', boxSizing: 'border-box',
+                    color: '#111827',
+                  }}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute', right: '14px',
+                    top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none',
+                    cursor: 'pointer', color: '#9ca3af',
+                    display: 'flex', alignItems: 'center',
+                  }}>
+                  {showPassword
+                    ? <EyeOff size={18} />
+                    : <Eye size={18} />
+                  }
+                </button>
               </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-purple-600 text-white py-3
-                  rounded-xl font-semibold hover:bg-purple-700
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  transition-colors text-base">
-                {loading ? (
-                  <span className="flex items-center
-                    justify-center gap-2">
-                    <svg className="animate-spin h-5 w-5"
-                      viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12"
-                        cy="12" r="10" stroke="currentColor"
-                        strokeWidth="4"/>
-                      <path className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                    </svg>
-                    Logging in...
-                  </span>
-                ) : 'Login to Dashboard'}
-              </button>
-            </form>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%', padding: '14px',
+                background: loading ? '#a78bfa' : '#7c3aed',
+                color: 'white', border: 'none',
+                borderRadius: '10px', fontSize: '16px',
+                fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
+                marginTop: '16px',
+              }}>
+              {loading ? 'Logging in...' : 'Login to Dashboard'}
+            </button>
+          </form>
 
-            <p className="text-center text-gray-500 mt-6 text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/register"
-                className="text-purple-600 font-semibold
-                  hover:underline">
-                Create free account
-              </Link>
-            </p>
-          </div>
+          <p style={{
+            textAlign: 'center', marginTop: '24px',
+            color: '#6b7280', fontSize: '14px',
+          }}>
+            Don&apos;t have an account?{' '}
+            <Link href="/register" style={{
+              color: '#7c3aed', fontWeight: 700,
+              textDecoration: 'none',
+            }}>
+              Create free account
+            </Link>
+          </p>
         </div>
       </div>
     </div>

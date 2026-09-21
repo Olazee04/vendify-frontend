@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, Eye, Package } from 'lucide-react';
+import { exportOrdersToCSV } from '@/lib/exportUtils';
+import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Order } from '@/types';
@@ -11,6 +13,8 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+const [bulkUpdating, setBulkUpdating] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -28,6 +32,24 @@ export default function OrdersPage() {
       setLoading(false);
     }
   };
+// Add bulk update function:
+const bulkUpdateStatus = async (status: number, label: string) => {
+  if (selectedOrders.length === 0) return;
+  setBulkUpdating(true);
+  let success = 0;
+  for (const orderId of selectedOrders) {
+    try {
+      await api.put(`/orders/${orderId}/status`, { status });
+      success++;
+    } catch {}
+  }
+  toast.success(
+    `${success} orders marked as ${label}`
+  );
+  setSelectedOrders([]);
+  fetchOrders();
+  setBulkUpdating(false);
+};
 
   const updateStatus = async (
     id: string, status: number, label: string
@@ -77,6 +99,19 @@ export default function OrdersPage() {
         </div>
       </div>
 
+<div className="flex items-center gap-2">
+  <button
+    onClick={() => exportOrdersToCSV(filtered)}
+    disabled={filtered.length === 0}
+    className="flex items-center gap-2 px-4 py-2.5
+      border border-gray-200 text-gray-600 rounded-xl
+      text-sm font-medium hover:bg-gray-50
+      disabled:opacity-50 transition-colors">
+    <Download size={15}/>
+    Export CSV
+  </button>
+</div>
+
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -110,7 +145,38 @@ export default function OrdersPage() {
           ))}
         </div>
       </div>
-
+{selectedOrders.length > 0 && (
+  <div className="flex items-center gap-3 p-3
+    bg-purple-50 border border-purple-200 rounded-xl">
+    <p className="text-sm font-medium text-purple-700">
+      {selectedOrders.length} order(s) selected
+    </p>
+    <div className="flex gap-2 ml-auto">
+      <button
+        onClick={() => bulkUpdateStatus(1, 'Confirmed')}
+        disabled={bulkUpdating}
+        className="px-3 py-1.5 bg-blue-600 text-white
+          rounded-lg text-xs font-medium hover:bg-blue-700
+          disabled:opacity-50">
+        Confirm All
+      </button>
+      <button
+        onClick={() => bulkUpdateStatus(3, 'Shipped')}
+        disabled={bulkUpdating}
+        className="px-3 py-1.5 bg-indigo-600 text-white
+          rounded-lg text-xs font-medium hover:bg-indigo-700
+          disabled:opacity-50">
+        Ship All
+      </button>
+      <button
+        onClick={() => setSelectedOrders([])}
+        className="px-3 py-1.5 border border-gray-300
+          text-gray-600 rounded-lg text-xs font-medium">
+        Clear
+      </button>
+    </div>
+  </div>
+)}
       {/* Orders Table */}
       {loading ? (
         <div className="space-y-3">
@@ -170,6 +236,24 @@ export default function OrdersPage() {
                     font-semibold text-gray-500 uppercase">
                     Actions
                   </th>
+                                     // In the table header row, add a checkbox column:
+<th className="px-5 py-3.5">
+  <input
+    type="checkbox"
+    onChange={(e) => {
+      if (e.target.checked) {
+        setSelectedOrders(filtered.map(o => o.id));
+      } else {
+        setSelectedOrders([]);
+      }
+    }}
+    checked={
+      selectedOrders.length === filtered.length &&
+      filtered.length > 0
+    }
+    className="w-4 h-4 accent-purple-600"
+  />
+</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -227,6 +311,23 @@ export default function OrdersPage() {
                           })}
                       </p>
                     </td>
+<td className="px-5 py-4">
+  <input
+    type="checkbox"
+    checked={selectedOrders.includes(order.id)}
+    onChange={(e) => {
+      if (e.target.checked) {
+        setSelectedOrders(prev => [...prev, order.id]);
+      } else {
+        setSelectedOrders(prev =>
+          prev.filter(id => id !== order.id)
+        );
+      }
+    }}
+    className="w-4 h-4 accent-purple-600"
+    onClick={(e) => e.stopPropagation()}
+  />
+</td>
                     <td className="px-5 py-4">
                       <div className="flex items-center
                         gap-2 justify-center">

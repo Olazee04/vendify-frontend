@@ -8,6 +8,8 @@ import {
   Clock, XCircle, RefreshCw, Copy,
   MessageCircle, ChevronRight
 } from 'lucide-react';
+import { exportOrderToPrint } from '@/lib/exportUtils';
+import { Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Order } from '@/types';
@@ -186,6 +188,15 @@ export default function OrderDetailPage() {
                 <Copy size={14} />
               </button>
             </div>
+            <button
+  onClick={() => order && exportOrderToPrint(order)}
+  className="flex items-center gap-2 px-3 py-2
+    border border-gray-200 text-gray-600 rounded-xl
+    text-sm font-medium hover:bg-gray-50
+    transition-colors">
+  <Printer size={15}/>
+  <span className="hidden sm:inline">Print Invoice</span>
+</button>
             <p className="text-gray-500 text-sm">
               {new Date(order.createdAt).toLocaleDateString(
                 'en-NG', {
@@ -342,7 +353,7 @@ export default function OrderDetailPage() {
                   className="flex items-center gap-3 p-3
                     bg-gray-50 rounded-xl">
                   <div className="w-14 h-14 bg-white rounded-xl
-                    overflow-hidden flex-shrink-0 border
+                    overflow-hidden shrink-0 border
                     border-gray-100">
                     {item.productImageUrl ? (
                       <img
@@ -372,7 +383,7 @@ export default function OrderDetailPage() {
                       ₦{item.unitPrice.toLocaleString()} each
                     </p>
                   </div>
-                  <div className="text-right flex-shrink-0">
+                  <div className="text-right shrink-0">
                     <p className="font-bold text-gray-900 text-sm">
                       ₦{item.totalPrice.toLocaleString()}
                     </p>
@@ -460,7 +471,7 @@ export default function OrderDetailPage() {
               <div className="mt-4 p-3 bg-indigo-50
                 rounded-xl flex items-center gap-3">
                 <Truck size={16} className="text-indigo-600
-                  flex-shrink-0"/>
+                  shrink-0"/>
                 <div>
                   <p className="text-xs text-indigo-500
                     font-medium">
@@ -514,7 +525,7 @@ export default function OrderDetailPage() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-purple-100
                   rounded-full flex items-center
-                  justify-center flex-shrink-0">
+                  justify-center shrink-0">
                   <span className="text-purple-600 font-bold">
                     {order.customerName[0]}
                   </span>
@@ -531,7 +542,7 @@ export default function OrderDetailPage() {
                 className="flex items-center gap-2 text-sm
                   text-gray-600 hover:text-purple-600
                   transition-colors">
-                <Mail size={14} className="flex-shrink-0"/>
+                <Mail size={14} className="shrink-0"/>
                 <span className="truncate">
                   {order.customerEmail}
                 </span>
@@ -541,7 +552,7 @@ export default function OrderDetailPage() {
                 className="flex items-center gap-2 text-sm
                   text-gray-600 hover:text-purple-600
                   transition-colors">
-                <Phone size={14} className="flex-shrink-0"/>
+                <Phone size={14} className="shrink-0"/>
                 {order.customerPhone}
               </a>
 
@@ -733,7 +744,7 @@ export default function OrderDetailPage() {
                     toast.success('Reference copied!');
                   }}
                   className="text-gray-400 hover:text-purple-600
-                    flex-shrink-0">
+                    shrink-0">
                   <Copy size={13}/>
                 </button>
               </div>
