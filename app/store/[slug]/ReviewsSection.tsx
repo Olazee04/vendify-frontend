@@ -64,7 +64,8 @@ export default function ReviewsSection({
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.customerName || !form.comment) {
+        if (!form.customerName || !form.comment ||
+        !form.customerEmail || !form.orderNumber) {
       toast.error('Please fill all required fields');
       return;
     }
@@ -233,7 +234,7 @@ export default function ReviewsSection({
           <div className="flex items-center justify-between
             mb-4">
             <h4 className="font-bold text-gray-900">
-              Write a Review
+              Write a Review (verified buyers only)
             </h4>
             <button
               onClick={() => setShowForm(false)}
@@ -282,6 +283,7 @@ export default function ReviewsSection({
                 </label>
                 <input
                   type="email"
+                  required
                   value={form.customerEmail}
                   onChange={(e) => setForm({
                     ...form, customerEmail: e.target.value
@@ -290,7 +292,7 @@ export default function ReviewsSection({
                     border-gray-200 rounded-xl focus:outline-none
                     focus:ring-2 focus:ring-purple-500
                     text-gray-900 bg-white text-sm"
-                  placeholder="john@email.com"
+                  placeholder="Email used for the order"
                 />
               </div>
             </div>
@@ -316,7 +318,7 @@ export default function ReviewsSection({
             <div>
               <label className="block text-sm font-medium
                 text-gray-700 mb-1.5">
-                Order Number (optional — verifies purchase)
+                Order Number * (from your order confirmation)
               </label>
               <input
                 type="text"
@@ -328,6 +330,7 @@ export default function ReviewsSection({
                   border-gray-200 rounded-xl focus:outline-none
                   focus:ring-2 focus:ring-purple-500
                   text-gray-900 bg-white text-sm"
+                required
                 placeholder="VND-20260101-0001"
               />
             </div>

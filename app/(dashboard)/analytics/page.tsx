@@ -12,6 +12,7 @@ import {
   Pie, Cell, Legend
 } from 'recharts';
 import api from '@/lib/api';
+import { useStoreCurrency } from '@/lib/useStoreCurrency';
 import { Dashboard } from '@/types';
 
 const COLORS = [
@@ -23,6 +24,7 @@ export default function AnalyticsPage() {
   const [data, setData] = useState<Dashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState('30');
+    const { fmt, fmtCompact } = useStoreCurrency();
 
   useEffect(() => {
     fetchData();
@@ -70,10 +72,8 @@ export default function AnalyticsPage() {
         {[
           {
             label: 'Total Revenue',
-            value: `₦${(data?.totalRevenue ?? 0)
-              .toLocaleString()}`,
-            sub: `₦${(data?.revenueThisMonth ?? 0)
-              .toLocaleString()} this month`,
+            value: fmt(data?.totalRevenue ?? 0),
+            sub: `${fmt(data?.revenueThisMonth ?? 0)} this month`,
             icon: TrendingUp,
             color: 'purple',
             trend: data?.revenueGrowthPercent,
@@ -176,11 +176,11 @@ export default function AnalyticsPage() {
             <YAxis
               tick={{ fontSize: 11, fill: '#9ca3af' }}
               tickFormatter={(v) =>
-                `₦${(v/1000).toFixed(0)}k`}
+                fmtCompact(Number(v))}
               axisLine={false} tickLine={false}/>
             <Tooltip
              formatter={(v) => [
-            `₦${Number(v ?? 0).toLocaleString()}`, 'Revenue'
+            fmt(Number(v ?? 0)), 'Revenue'
             ]}
               contentStyle={{
                 borderRadius: '12px',
@@ -302,11 +302,11 @@ export default function AnalyticsPage() {
                     <img src={product.imageUrl}
                       alt={product.name}
                       className="w-10 h-10 rounded-xl
-                        object-cover flex-shrink-0"/>
+                        object-cover shrink-0"/>
                   ) : (
                     <div className="w-10 h-10 bg-purple-100
                       rounded-xl flex items-center
-                      justify-center flex-shrink-0">
+                      justify-center shrink-0">
                       <Package size={16}
                         className="text-purple-400"/>
                     </div>
@@ -319,8 +319,8 @@ export default function AnalyticsPage() {
                         {product.name}
                       </p>
                       <p className="text-sm font-bold
-                        text-gray-900 ml-4 flex-shrink-0">
-                        ₦{product.revenue.toLocaleString()}
+                        text-gray-900 ml-4 shrink-0">
+                        {fmt(product.revenue)}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
@@ -333,7 +333,7 @@ export default function AnalyticsPage() {
                         />
                       </div>
                       <p className="text-xs text-gray-400
-                        flex-shrink-0">
+                        shrink-0">
                         {product.salesCount} sold
                       </p>
                     </div>

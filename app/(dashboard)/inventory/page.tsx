@@ -16,6 +16,7 @@ export default function InventoryPage() {
   const [adjusting, setAdjusting] = useState<string | null>(null);
   const [adjustQty, setAdjustQty] = useState('');
   const [adjustReason, setAdjustReason] = useState('Purchase');
+  const [adjustVariantId, setAdjustVariantId] = useState('');
 
   useEffect(() => {
     fetchInventory();
@@ -36,22 +37,29 @@ export default function InventoryPage() {
     }
   };
 
-  const handleAdjust = async (productId: string, add: boolean) => {
+    const handleAdjust = async (item: InventoryItem, add: boolean) => {
     const qty = parseInt(adjustQty);
     if (!qty || qty <= 0) {
       toast.error('Enter a valid quantity');
       return;
     }
+    const hasOptions = (item.variants?.length ?? 0) > 0;
+    if (hasOptions && !item.variants!.some(v => v.id === adjustVariantId)) {
+      toast.error('Choose an option first');
+      return;
+    }
 
     try {
       await api.post('/inventory/adjust', {
-        productId,
+        productId: item.productId,
+        variantId: hasOptions ? adjustVariantId : null,
         quantity: add ? qty : -qty,
         reason: adjustReason,
       });
       toast.success('Stock updated successfully!');
       setAdjusting(null);
       setAdjustQty('');
+      setAdjustVariantId('');
       fetchInventory();
     } catch (error: any) {
       toast.error(error.response?.data?.message
@@ -248,11 +256,11 @@ export default function InventoryPage() {
                           <img src={item.imageUrl}
                             alt={item.productName}
                             className="w-9 h-9 rounded-lg
-                              object-cover flex-shrink-0" />
+                              object-cover shrink-0" />
                         ) : (
                           <div className="w-9 h-9 bg-gray-100
                             rounded-lg flex items-center
-                            justify-center flex-shrink-0">
+                            justify-center shrink-0">
                             <Package size={14}
                               className="text-gray-400" />
                           </div>
@@ -266,6 +274,18 @@ export default function InventoryPage() {
                             <p className="text-xs text-gray-400">
                               {item.categoryName}
                             </p>
+                          )}
+                                                    {(item.variants?.length ?? 0) > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {item.variants!.map(v => (
+                                <span key={v.id}
+                                  className={`px-1.5 py-0.5 rounded text-[11px] ${
+                                    stockStatusColor[v.stockStatus] ?? 'bg-gray-100 text-gray-600'
+                                  }`}>
+                                  {v.value}: {v.stockQuantity}
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
                       </div>
@@ -330,6 +350,22 @@ export default function InventoryPage() {
                             Adjust stock for{' '}
                             <strong>{item.productName}</strong>
                           </p>
+                                                    {(item.variants?.length ?? 0) > 0 && (
+                            <select
+                              value={
+                                item.variants!.some(v => v.id === adjustVariantId)
+                                  ? adjustVariantId : ''
+                              }
+                              onChange={(e) => setAdjustVariantId(e.target.value)}
+                              className="px-3 py-2 border border-purple-200 rounded-lg text-sm bg-white focus:outline-none">
+                              <option value="">Choose option</option>
+                              {item.variants!.map(v => (
+                                <option key={v.id} value={v.id}>
+                                  {v.name}: {v.value} ({v.stockQuantity})
+                                </option>
+                              ))}
+                            </select>
+                          )}
                           <input
                             type="number"
                             min="1"
@@ -358,7 +394,7 @@ export default function InventoryPage() {
                           </select>
                           <button
                             onClick={() => handleAdjust(
-                              item.productId, true
+                              item, true
                             )}
                             className="flex items-center gap-1.5
                               px-3 py-2 bg-green-600 text-white
@@ -368,7 +404,7 @@ export default function InventoryPage() {
                           </button>
                           <button
                             onClick={() => handleAdjust(
-                              item.productId, false
+                              item, false
                             )}
                             className="flex items-center gap-1.5
                               px-3 py-2 bg-red-500 text-white

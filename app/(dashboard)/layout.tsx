@@ -10,7 +10,7 @@ import {
   Truck, ChevronRight, Ticket,
   Star, Gift, CreditCard,
   MessageCircle, Share2, Plug,
-  Bell, Image as ImageIcon
+  Bell, Image as ImageIcon, AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import api from '@/lib/api';
@@ -19,6 +19,9 @@ const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Products', href: '/products', icon: Package },
   { label: 'Orders', href: '/orders', icon: ShoppingBag },
+  { label: 'Payment Issues', href: '/payments-attention', icon: AlertTriangle },
+  { label: 'Stockpile', href: '/stockpile', icon: Truck },
+  { label: 'Payments', href: '/payments', icon: CreditCard },
   { label: 'Inventory', href: '/inventory', icon: Boxes },
   { label: 'Categories', href: '/categories', icon: Tag },
   { label: 'Shipping', href: '/shipping', icon: Truck },
@@ -46,6 +49,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [orderCount, setOrderCount] = useState(0);
   const [lowStock, setLowStock] = useState(0);
+  const [paymentIssues, setPaymentIssues] = useState(0);
 
   useEffect(() => {
     const token = Cookies.get('vendify_token');
@@ -58,7 +62,8 @@ export default function DashboardLayout({
     fetchAlerts();
   }, []);
 
-  const fetchAlerts = async () => {
+  
+     const fetchAlerts = async () => {
     try {
       const [ordersRes, inventoryRes] = await Promise.all([
         api.get('/orders?status=Pending'),
@@ -66,6 +71,12 @@ export default function DashboardLayout({
       ]);
       setOrderCount(ordersRes.data.data?.orders?.length ?? 0);
       setLowStock(inventoryRes.data.data?.length ?? 0);
+    } catch {}
+
+    // Separate on purpose: if this one fails, the other badges still work
+    try {
+      const res = await api.get('/payments-attention');
+      setPaymentIssues(res.data.data?.length ?? 0);
     } catch {}
   };
 
@@ -138,6 +149,11 @@ export default function DashboardLayout({
                 {item.label === 'Inventory' && lowStock > 0 && (
                   <span className="w-5 h-5 bg-amber-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
                     {lowStock}
+                  </span>
+                )}
+                                {item.label === 'Payment Issues' && paymentIssues > 0 && (
+                  <span className="w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    {paymentIssues > 9 ? '9+' : paymentIssues}
                   </span>
                 )}
                 {isActive && <ChevronRight size={14} className="opacity-70" />}

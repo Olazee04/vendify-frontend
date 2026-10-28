@@ -58,7 +58,7 @@ export default function EditProductPage() {
         sku: p.sku ?? '',
         tags: p.tags ?? '',
         categoryId: p.categoryId ?? '',
-        weight: p.variants?.[0]?.toString() ?? '',
+        weight: (p as any).weight?.toString() ?? '',
       });
     } catch {
       toast.error('Product not found');
@@ -100,8 +100,8 @@ export default function EditProductPage() {
       if (form.weight) payload.weight = parseFloat(form.weight);
 
       await api.put(`/products/${params.id}`, payload);
-      toast.success('Product updated! ✅');
-      fetchProduct();
+            toast.success('Product updated! ✅');
+      router.push('/products');
     } catch (error: any) {
       toast.error(error.response?.data?.message
         || 'Failed to update product');
@@ -583,7 +583,34 @@ const formatPrice = (price: number) =>
             </label>
           </div>
         </div>
-
+        {/* Shipping weight */}
+        <div className="bg-white rounded-2xl border
+          border-gray-100 p-6 space-y-3">
+          <h2 className="font-bold text-gray-900">Weight</h2>
+          <div>
+            <label className="block text-sm font-medium
+              text-gray-700 mb-1.5">
+              Weight (kg)
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.weight}
+              onChange={(e) => setForm({
+                ...form, weight: e.target.value
+              })}
+              className="w-full px-4 py-3 border border-gray-200
+                rounded-xl focus:outline-none focus:ring-2
+                focus:ring-purple-500 text-gray-900"
+              placeholder="e.g. 0.5"
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              Used for stockpile weight limits. Optional.
+            </p>
+          </div>
+        </div>
+        
         {/* Visibility */}
         <div className="bg-white rounded-2xl border
           border-gray-100 p-5">

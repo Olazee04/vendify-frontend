@@ -137,6 +137,8 @@ export interface ShippingZone {
   estimatedDaysMin?: number;
   estimatedDaysMax?: number;
   deliveryEstimate?: string;
+  state?: string;
+  city?: string;
 }
 
 export interface Coupon {
@@ -221,6 +223,13 @@ export interface InventoryItem {
   imageUrl?: string;
   price: number;
   categoryName?: string;
+    variants?: {
+    id: string;
+    name: string;
+    value: string;
+    stockQuantity: number;
+    stockStatus: string;
+  }[];
 }
 
 export interface Theme {

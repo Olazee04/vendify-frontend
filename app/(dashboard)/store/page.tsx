@@ -232,6 +232,10 @@ export default function StorePage() {
                 <option value="GBP">British Pound (GBP)</option>
                 <option value="EUR">Euro (EUR)</option>
                 <option value="GHS">Ghana Cedis (GHS)</option>
+                              <p className="text-xs text-gray-400 mt-1.5">
+                Display only. Other currencies are approximate, and customers
+                are always charged in Naira (₦).
+              </p>
               </select>
             </div>
           </div>

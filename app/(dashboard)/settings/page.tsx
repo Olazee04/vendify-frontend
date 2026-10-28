@@ -169,7 +169,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3 p-4
             bg-green-50 rounded-xl">
             <Shield size={16} className="text-green-600
-              flex-shrink-0"/>
+              shrink-0"/>
             <div>
               <p className="text-sm font-medium text-green-800">
                 Account Status

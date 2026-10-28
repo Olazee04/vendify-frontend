@@ -123,7 +123,7 @@ export default function NewProductPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
         <Link href="/products"
           className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
@@ -324,6 +324,23 @@ export default function NewProductPage() {
         {/* Additional */}
         <div className="bg-white rounded-2xl border border-gray-100 p-6 space-y-4">
           <h3 className="font-bold text-gray-900">Additional Details</h3>
+                    <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Weight (kg)
+            </label>
+            <input
+              type="number"
+              value={form.weight}
+              onChange={e => setForm({ ...form, weight: e.target.value })}
+              placeholder="e.g. 0.5"
+              min="0"
+              step="0.01"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              Used for stockpile weight limits. Optional.
+            </p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Tags</label>
             <input

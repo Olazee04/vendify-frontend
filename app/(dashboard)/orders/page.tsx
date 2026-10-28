@@ -7,6 +7,7 @@ import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import { Order } from '@/types';
+import { useStoreCurrency } from '@/lib/useStoreCurrency';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -14,13 +15,15 @@ export default function OrdersPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
-const [bulkUpdating, setBulkUpdating] = useState(false);
+  const [bulkUpdating, setBulkUpdating] = useState(false);
+    const { fmt } = useStoreCurrency();
+  const [stockpiles, setStockpiles] = useState<any[]>([]);
 
   useEffect(() => {
     fetchOrders();
   }, [filter]);
 
-  const fetchOrders = async () => {
+    const fetchOrders = async () => {
     try {
       const params: any = {};
       if (filter !== 'all') params.status = filter;
@@ -30,6 +33,14 @@ const [bulkUpdating, setBulkUpdating] = useState(false);
       toast.error('Failed to load orders');
     } finally {
       setLoading(false);
+    }
+
+    // Stockpiles (if this fails, the orders still show normally)
+    try {
+      const sres = await api.get('/stockpile-admin');
+      setStockpiles(sres.data.data?.stockpiles ?? []);
+    } catch {
+      setStockpiles([]);
     }
   };
 // Add bulk update function:
@@ -83,6 +94,28 @@ const bulkUpdateStatus = async (status: number, label: string) => {
     Paid: 'bg-green-100 text-green-600',
     Failed: 'bg-gray-100 text-gray-600',
   };
+
+  
+  // Order numbers that came from a stockpile checkout
+  const stockpileOrderNumbers = new Set(
+    stockpiles
+      .filter((s) => s.status === 'CheckedOut' && s.orderNumber)
+      .map((s) => s.orderNumber as string)
+  );
+
+  // Stockpiles still held by the store (only shown under "All")
+  const heldRows =
+    filter === 'all'
+      ? stockpiles.filter((s) => {
+          const held = s.status === 'Open' || s.status === 'Expired';
+          const q = search.toLowerCase();
+          return (
+            held &&
+            ((s.customerName ?? '').toLowerCase().includes(q) ||
+              (s.customerEmail ?? '').toLowerCase().includes(q))
+          );
+        })
+      : [];
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -185,7 +218,7 @@ const bulkUpdateStatus = async (status: number, label: string) => {
               border border-gray-100 animate-pulse h-20" />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+     ) : filtered.length === 0 && heldRows.length === 0 ? (
         <div className="bg-white rounded-2xl border
           border-gray-100 p-16 text-center">
           <Package size={48} className="text-gray-300
@@ -212,6 +245,10 @@ const bulkUpdateStatus = async (status: number, label: string) => {
                     font-semibold text-gray-500 uppercase">
                     Order
                   </th>
+                                    <th className="text-left px-5 py-3.5 text-xs
+                    font-semibold text-gray-500 uppercase">
+                    Type
+                  </th>
                   <th className="text-left px-5 py-3.5 text-xs
                     font-semibold text-gray-500 uppercase">
                     Customer
@@ -232,28 +269,29 @@ const bulkUpdateStatus = async (status: number, label: string) => {
                     font-semibold text-gray-500 uppercase">
                     Date
                   </th>
+                     <th className="px-5 py-3.5">
+                    <input
+                      type="checkbox"
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedOrders(filtered.map(o => o.id));
+                        } else {
+                          setSelectedOrders([]);
+                        }
+                      }}
+                      checked={
+                        selectedOrders.length === filtered.length &&
+                        filtered.length > 0
+                      }
+                      className="w-4 h-4 accent-purple-600"
+                    />
+                  </th>
                   <th className="px-5 py-3.5 text-xs
                     font-semibold text-gray-500 uppercase">
                     Actions
                   </th>
-                                     // In the table header row, add a checkbox column:
-<th className="px-5 py-3.5">
-  <input
-    type="checkbox"
-    onChange={(e) => {
-      if (e.target.checked) {
-        setSelectedOrders(filtered.map(o => o.id));
-      } else {
-        setSelectedOrders([]);
-      }
-    }}
-    checked={
-      selectedOrders.length === filtered.length &&
-      filtered.length > 0
-    }
-    className="w-4 h-4 accent-purple-600"
-  />
-</th>
+                                    
+               
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -269,6 +307,17 @@ const bulkUpdateStatus = async (status: number, label: string) => {
                         {order.items.length} item(s)
                       </p>
                     </td>
+                                        <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                        stockpileOrderNumbers.has(order.orderNumber)
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {stockpileOrderNumbers.has(order.orderNumber)
+                          ? 'Stockpile (shipped)'
+                          : 'Delivery'}
+                      </span>
+                    </td>
                     <td className="px-5 py-4">
                       <p className="font-medium text-gray-800
                         text-sm">
@@ -280,7 +329,7 @@ const bulkUpdateStatus = async (status: number, label: string) => {
                     </td>
                     <td className="px-5 py-4">
                       <p className="font-bold text-gray-900 text-sm">
-                        ₦{order.total.toLocaleString()}
+                        {fmt(order.total)}
                       </p>
                     </td>
                     <td className="px-5 py-4">
@@ -372,6 +421,70 @@ const bulkUpdateStatus = async (status: number, label: string) => {
                             Delivered
                           </button>
                         )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                                {heldRows.map((s) => (
+                  <tr key={`stk-${s.id}`}
+                    className="hover:bg-gray-50 transition-colors bg-purple-50/40">
+                    <td className="px-5 py-4">
+                      <p className="font-semibold text-gray-900 text-sm">
+                        Stockpile
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {s.totalItems} item(s)
+                      </p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+                        Stockpile (held)
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="font-medium text-gray-800 text-sm">
+                        {s.customerName}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {s.customerPhone}
+                      </p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="font-bold text-gray-900 text-sm">
+                        {fmt(s.totalAmount ?? 0)}
+                      </p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                        s.status === 'Expired'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-amber-100 text-amber-700'
+                      }`}>
+                        {s.status === 'Expired' ? 'Expired' : 'Held'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${paymentColors.Paid}`}>
+                        Paid
+                      </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <p className="text-sm text-gray-500">
+                        {new Date(s.createdAt).toLocaleDateString('en-NG', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </td>
+                    <td className="px-5 py-4"></td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2 justify-center">
+                        <Link
+                          href="/stockpile/customers"
+                          className="p-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-purple-100 hover:text-purple-600 transition-colors">
+                          <Eye size={14} />
+                        </Link>
                       </div>
                     </td>
                   </tr>
